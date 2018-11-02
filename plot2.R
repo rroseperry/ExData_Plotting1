@@ -1,0 +1,29 @@
+##  Exploratory Data Analysis plot 2
+
+
+#    second graph looks like a scatterplot with lines 
+#  read in data set
+household_power_consumption <- read.csv("~/Data Science Course/Data Sets/GraphsWeek1/household_power_consumption.txt", sep=";")
+str(household_power_consumption)
+# make DateTime variable
+household_power_consumption$datetime<- paste(household_power_consumption$Date,household_power_consumption$Time)
+
+# should be char
+str(household_power_consumption$datetime)
+
+#   Convert years
+library(lubridate)
+household_power_consumption$Date <- parse_date_time(x = household_power_consumption$Date,
+                                                    orders = c("d/m/Y"))
+#   subset data to period 2007-02-01 to 2007-02-02
+shortcons <-household_power_consumption[ household_power_consumption$Date >= as.Date("2007-02-01"), ]
+shortcons <-shortcons[shortcons$Date < as.Date("2007-02-03"),]
+str(shortcons)
+
+#    convert times to days of the week
+shortcons$datetime<-as.POSIXct(shortcons$datetime, tryFormats = c("%d/%m/%Y %H:%M%OS"))
+summary(wday(shortcons$datetime, label=TRUE))
+plot(shortcons$datetime, shortcons$Global_active_power, ylab = "Global Active Power (kilowatts)", type = "l", xlab = "")
+dev.copy(png, "plot2.ng")
+dev.off()
+
